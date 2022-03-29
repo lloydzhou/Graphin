@@ -109,6 +109,7 @@ declare const _default: {
                 fontSize: number;
                 textAlign: string;
             };
+            animate: {};
         };
         status: {
             hover: {

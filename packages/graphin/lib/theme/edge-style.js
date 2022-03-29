@@ -52,7 +52,8 @@ var getEdgeStyleByTheme = function getEdgeStyleByTheme(inputTheme) {
         fill: Color.label,
         fontSize: 12,
         textAlign: 'center'
-      }
+      },
+      animate: {}
     },
     status: {
       hover: {

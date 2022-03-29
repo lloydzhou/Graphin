@@ -163,6 +163,7 @@ export declare const getDefaultStyleByTheme: (inputTheme: Partial<ThemeType> | u
                 fontSize: number;
                 textAlign: string;
             };
+            animate: {};
         };
     };
     defaultEdgeStatusStyle: {

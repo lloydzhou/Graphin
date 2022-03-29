@@ -140,7 +140,7 @@ var getPolyEdgeControlPoint = function getPolyEdgeControlPoint(p1, p2, d) {
 };
 
 var processKeyshape = function processKeyshape(cfg, style) {
-  var _a, _b;
+  var _a, _b, _c;
 
   var _cfg$startPoint = cfg.startPoint,
       startPoint = _cfg$startPoint === void 0 ? {
@@ -164,12 +164,12 @@ var processKeyshape = function processKeyshape(cfg, style) {
       _keyshape$loop = keyshape.loop,
       loop = _keyshape$loop === void 0 ? {} : _keyshape$loop;
   var source = sourceNode.get('model');
-  var target = (targetNode === null || targetNode === void 0 ? void 0 : targetNode.get('model')) || {
+  var target = ((_a = targetNode) === null || _a === void 0 ? void 0 : _a.get('model')) || {
     id: 'temp'
   };
 
   if (type === 'loop' || source.id === target.id) {
-    var nodeSize = ((_b = (_a = source.style) === null || _a === void 0 ? void 0 : _a.keyshape) === null || _b === void 0 ? void 0 : _b.size) || 26;
+    var nodeSize = ((_c = (_b = source.style) === null || _b === void 0 ? void 0 : _b.keyshape) === null || _c === void 0 ? void 0 : _c.size) || 26;
 
     var _Object$assign = Object.assign({
       // 默认是是节点的高度
@@ -214,7 +214,7 @@ var processKeyshape = function processKeyshape(cfg, style) {
 var _default = function _default() {
   _g.default.registerEdge('graphin-line', {
     draw: function draw(cfg, group) {
-      var _a, _b, _c, _d;
+      var _a, _b, _c, _d, _e;
 
       var _theme = cfg.style._theme;
       this.options = getStyleByTheme(_theme);
@@ -244,10 +244,10 @@ var _default = function _default() {
       /** 计算目标节点的大小 */
 
       var source = sourceNode.get('model');
-      var target = (targetNode === null || targetNode === void 0 ? void 0 : targetNode.get('model')) || {
+      var target = ((_a = targetNode) === null || _a === void 0 ? void 0 : _a.get('model')) || {
         id: 'temp'
       };
-      var nodeSize = ((_b = (_a = source.style) === null || _a === void 0 ? void 0 : _a.keyshape) === null || _b === void 0 ? void 0 : _b.size) || 28;
+      var nodeSize = ((_c = (_b = source.style) === null || _b === void 0 ? void 0 : _b.keyshape) === null || _c === void 0 ? void 0 : _c.size) || 28;
       /** 计算是否为loop */
 
       var isLoop = (keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.type) === 'loop' || source.id === target.id;
@@ -255,7 +255,7 @@ var _default = function _default() {
       /** 计算poly控制点 */
 
       var isPoly = (keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.type) === 'poly';
-      var controlPoints = getPolyEdgeControlPoint(startPoint, endPoint, ((_c = keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.poly) === null || _c === void 0 ? void 0 : _c.distance) || 0);
+      var controlPoints = getPolyEdgeControlPoint(startPoint, endPoint, ((_d = keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.poly) === null || _d === void 0 ? void 0 : _d.distance) || 0);
       var lineWidth = (keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.lineWidth) || 1;
       var d = lineWidth + 5;
       var path = processKeyshape(cfg, style); // TODO:支持多边
@@ -344,12 +344,12 @@ var _default = function _default() {
             radius: 6
           };
 
-          var _e = Object.assign(Object.assign({}, defaultBackground), background),
-              fill = _e.fill,
-              width = _e.width,
-              height = _e.height,
-              stroke = _e.stroke,
-              otherBackgroundAttrs = __rest(_e, ["fill", "width", "height", "stroke"]);
+          var _f = Object.assign(Object.assign({}, defaultBackground), background),
+              fill = _f.fill,
+              width = _f.width,
+              height = _f.height,
+              stroke = _f.stroke,
+              otherBackgroundAttrs = __rest(_f, ["fill", "width", "height", "stroke"]);
 
           var labelBackgroundShape = group.addShape('rect', {
             attrs: Object.assign({
@@ -375,7 +375,7 @@ var _default = function _default() {
         var y = offsetY - fontSize / 2;
 
         if (isLoop) {
-          y = offsetY - nodeSize * 1.6 - (((_d = keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.loop) === null || _d === void 0 ? void 0 : _d.distance) || 0) * 2;
+          y = offsetY - nodeSize * 1.6 - (((_e = keyShapeStyle === null || keyShapeStyle === void 0 ? void 0 : keyShapeStyle.loop) === null || _e === void 0 ? void 0 : _e.distance) || 0) * 2;
         }
 
         if (hasBackground) {
@@ -431,6 +431,93 @@ var _default = function _default() {
         });
       } catch (error) {
         console.error(error);
+      }
+    },
+    afterDraw: function afterDraw(cfg, group) {
+      var style = (0, _util.deepMix)({}, this.options.style, cfg.style);
+      var animate = style.animate,
+          keyshape = style.keyshape;
+      /** 如果没有 style.animate 就不绘制 */
+
+      if (!animate || !animate.type || animate.visible === false) {
+        return;
+      } // get the keshape
+
+
+      var shape = group.get('children').find(function (s) {
+        return s.get('name') === 'keyshape';
+      });
+      var color = animate.color,
+          type = animate.type,
+          _animate$repeat = animate.repeat,
+          repeat = _animate$repeat === void 0 ? true : _animate$repeat,
+          _animate$duration = animate.duration,
+          duration = _animate$duration === void 0 ? 3000 : _animate$duration;
+
+      if (type === 'circle-running') {
+        // the start position of the edge's path
+        var startPoint = shape.getPoint(0); // add red circle shape
+
+        var circle = group.addShape('circle', {
+          attrs: {
+            x: startPoint.x,
+            y: startPoint.y,
+            fill: color || keyshape.stroke,
+            r: keyshape.lineWidth * 1.5 + 2
+          },
+          name: 'circle-shape'
+        }); // animation for the red circle
+
+        circle.animate(function (ratio) {
+          var tmpPoint = shape.getPoint(ratio);
+          return {
+            x: tmpPoint.x,
+            y: tmpPoint.y
+          };
+        }, {
+          repeat: repeat,
+          duration: duration // the duration for executing once
+
+        });
+      }
+
+      if (type === 'line-dash') {
+        var index = 0;
+        var lineDash = animate.lineDash || keyshape.lineDash || [4, 2, 1, 2]; // Define the animation
+
+        shape.animate(function () {
+          index++;
+
+          if (index > 9) {
+            index = 0;
+          } // returns the modified configurations here, lineDash and lineDashOffset here
+
+
+          return {
+            lineDash: lineDash,
+            lineDashOffset: -index
+          };
+        }, {
+          repeat: repeat,
+          duration: duration // the duration for executing once
+
+        });
+      }
+
+      if (type === 'line-growth') {
+        var length = shape.getTotalLength();
+        shape.animate(function (ratio) {
+          // the operations in each frame. Ratio ranges from 0 to 1 indicating the prograss of the animation. Returns the modified configurations
+          var startLen = ratio * length; // Calculate the lineDash
+
+          return {
+            lineDash: [startLen, length - startLen]
+          };
+        }, {
+          repeat: repeat,
+          duration: duration // the duration for executing once
+
+        });
       }
     }
   });

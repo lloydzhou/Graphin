@@ -29,6 +29,7 @@ declare const getEdgeStyleByTheme: (inputTheme: EdgeTheme) => {
             fontSize: number;
             textAlign: string;
         };
+        animate: {};
     };
     status: {
         hover: {
