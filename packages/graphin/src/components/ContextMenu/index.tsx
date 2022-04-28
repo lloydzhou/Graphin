@@ -42,12 +42,22 @@ const ContextMenu: React.FunctionComponent<ContextMenuProps> = props => {
   }
   const id = (item && !item.destroyed && item.getModel && item.getModel().id) || '';
 
+  const onClick = useCallback(
+    e => {
+      e.stopPropagation();
+      onClose();
+    },
+    [onClose],
+  );
+
   return (
     <div
       ref={container}
       className="graphin-components-contextmenu"
       style={{ ...defaultStyle, ...style, ...positionStyle }}
       key={id}
+      aria-hidden
+      onClick={onClick}
     >
       {visible &&
         children({
